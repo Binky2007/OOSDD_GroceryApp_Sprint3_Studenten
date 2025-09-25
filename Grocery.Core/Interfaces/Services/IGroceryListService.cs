@@ -12,5 +12,6 @@ namespace Grocery.Core.Interfaces.Services
         public GroceryList? Get(int id);
 
         public GroceryList? Update(GroceryList item);
+        
     }
 }

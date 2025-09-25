@@ -64,6 +64,9 @@
                            x:Name="searchBar"
                            SearchCommand="{Binding SearchProductCommand}"
                            SearchCommandParameter="{Binding Text, Source={x:Reference searchBar}}" />
+                
+                
+                
 
 
 
