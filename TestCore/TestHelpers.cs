@@ -31,10 +31,11 @@ namespace TestCore
         [Test]
         public void TestPasswordHelperReturnsFalse()
         {
-            string password = "user3";
+            string password = "user1";
             string passwordHash = "sxnIcZdYt8wC8MYWcQVQjQ==.WrongHashHere";
             Assert.IsFalse(PasswordHelper.VerifyPassword(password, passwordHash));
             
+            Assert.Pass();
             
         }
 
@@ -44,6 +45,7 @@ namespace TestCore
         {
             Assert.IsFalse(PasswordHelper.VerifyPassword(password, passwordHash));
             
+            Assert.Fail(); 
         }
     }
 }
