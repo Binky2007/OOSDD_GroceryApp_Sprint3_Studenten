@@ -7,6 +7,7 @@ using Grocery.Core.Models;
 using System.Collections.ObjectModel;
 using System.Text.Json;
 
+
 namespace Grocery.App.ViewModels
 {
     [QueryProperty(nameof(GroceryList), nameof(GroceryList))]
@@ -83,6 +84,9 @@ namespace Grocery.App.ViewModels
             AvailableProducts.Remove(product);
             OnGroceryListChanged(GroceryList);
         }
+        
+        
+        
 
         [RelayCommand]
         public async Task ShareGroceryList(CancellationToken cancellationToken)
@@ -110,4 +114,6 @@ namespace Grocery.App.ViewModels
 
 
     }
+    
+   
 }
