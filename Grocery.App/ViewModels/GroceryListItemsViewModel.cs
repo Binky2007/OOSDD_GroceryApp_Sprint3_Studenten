@@ -7,6 +7,7 @@ using Grocery.Core.Models;
 using System.Collections.ObjectModel;
 using System.Text.Json;
 
+
 namespace Grocery.App.ViewModels
 {
     [QueryProperty(nameof(GroceryList), nameof(GroceryList))]
@@ -15,9 +16,13 @@ namespace Grocery.App.ViewModels
         private readonly IGroceryListItemsService _groceryListItemsService;
         private readonly IProductService _productService;
         private readonly IFileSaverService _fileSaverService;
+        private string searchTerm;
+
         
         public ObservableCollection<GroceryListItem> MyGroceryListItems { get; set; } = [];
         public ObservableCollection<Product> AvailableProducts { get; set; } = [];
+        public ObservableCollection<Product> FilteredAvailableProducts { get; set; } = new();
+
 
         [ObservableProperty]
         GroceryList groceryList = new(0, "None", DateOnly.MinValue, "", 0);
@@ -39,12 +44,22 @@ namespace Grocery.App.ViewModels
             GetAvailableProducts();
         }
 
-        private void GetAvailableProducts()
+        private void GetAvailableProducts(string searchTerm = null)
         {
             AvailableProducts.Clear();
+
             foreach (Product p in _productService.GetAll())
-                if (MyGroceryListItems.FirstOrDefault(g => g.ProductId == p.Id) == null  && p.Stock > 0)
-                    AvailableProducts.Add(p);
+            {
+                if (MyGroceryListItems.FirstOrDefault(g => g.ProductId == p.Id) == null && p.Stock > 0)
+                {
+                    if (string.IsNullOrWhiteSpace(searchTerm) || p.Name.Contains(searchTerm, StringComparison.OrdinalIgnoreCase))
+                        AvailableProducts.Add(p);
+                }
+            }
+
+            FilteredAvailableProducts.Clear();
+            foreach (var p in AvailableProducts)
+                FilteredAvailableProducts.Add(p);
         }
 
         partial void OnGroceryListChanged(GroceryList value)
@@ -69,6 +84,9 @@ namespace Grocery.App.ViewModels
             AvailableProducts.Remove(product);
             OnGroceryListChanged(GroceryList);
         }
+        
+        
+        
 
         [RelayCommand]
         public async Task ShareGroceryList(CancellationToken cancellationToken)
@@ -85,6 +103,17 @@ namespace Grocery.App.ViewModels
                 await Toast.Make($"Opslaan mislukt: {ex.Message}").Show(cancellationToken);
             }
         }
+        
+        
+        [RelayCommand]
+        public void SearchProduct(string productName)
+        {
+            GetAvailableProducts(productName);
+        }
+
+
 
     }
+    
+   
 }
